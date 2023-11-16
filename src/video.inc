@@ -18,6 +18,23 @@ MACRO waitVBlankEnd
 ENDM
 
 
+; Turns off the screen and resets the scroll and pallete to the defaults.
+MACRO resetVideo
+    ld a, 0
+    ld [rLCDC], a
+    ld [rSCX], a
+    ld [rSCY], a
+
+    ld a, %11100100
+    ld [rBGP], a
+    ld [rOBP0], a
+    ld [rOBP1], a
+
+    memSet _SCRN0, $00, $400
+    memSet _ShadowOAM, $00, $FF
+ENDM
+
+
 ; Transfers one row of data to the specified tilemap. Useful for printing text.
 ;
 ; Args:
