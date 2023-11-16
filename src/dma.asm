@@ -14,9 +14,9 @@ DMATransfer::
     ld a, $C1
     ld [rDMA], a
     ld a, OAM_COUNT
-.wait
+:
     dec a
-    jr nz, .wait
+    jr nz, :-
     ei
     ret
 .end

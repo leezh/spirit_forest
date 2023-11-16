@@ -1,18 +1,18 @@
 ; Waits until screen blank
 MACRO waitVBlank
-.wait\@:
+:
     ld a, [rLY]
     cp a, SCRN_Y
-    jr c, .wait\@
+    jr c, :-
 ENDM
 
 
 ; Waits until screen blank ends
 MACRO waitVBlankEnd
-.wait\@:
+:
     ld a, [rLY]
     cp a, SCRN_Y
-    jr nc, .wait\@
+    jr nc, :-
 ENDM
 
 
@@ -35,12 +35,12 @@ MACRO tileBlitRow
         ld hl, \4
         ld b, \4.end - \4 + $01
     ENDC
-    jr .skip\@
-.loop\@:
+    jr :++
+:
     ld a, [hli]
     ld [de], a
     inc de
-.skip\@:
+:
     dec b
-    jr nz, .loop\@
+    jr nz, :--
 ENDM

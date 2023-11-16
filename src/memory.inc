@@ -12,16 +12,16 @@ MACRO memSet
     ELSE
         ld b, \3 + $1
     ENDC
-    jr .skip\@
-.loop\@:
+    jr :++
+:
     ld [hli], a
-.skip\@:
+:
     IF \3 > $FE
         dec c
-        jr nz, .loop\@
+        jr nz, :--
     ENDC
     dec b
-    jr nz, .loop\@
+    jr nz, :--
 ENDM
 
 
@@ -41,16 +41,16 @@ MACRO memCopy
     ELSE
         ld bc, \2.end - \2 + $101
     ENDC
-    jr .skip\@
-.loop\@:
+    jr :++
+:
     ld a, [hli]
     ld [de], a
     inc de
-.skip\@:
+:
     dec c
-    jr nz, .loop\@
+    jr nz, :--
     dec b
-    jr nz, .loop\@
+    jr nz, :--
 ENDM
 
 
@@ -70,14 +70,14 @@ MACRO memCopySmall
     ELSE
         ld b, \2.end - \2 + $1
     ENDC
-    jr .skip\@
-.loop\@:
+    jr :++
+:
     ld a, [hli]
     ld [de], a
     inc de
-.skip\@:
+:
     dec b
-    jr nz, .loop\@
+    jr nz, :--
 ENDM
 
 
@@ -98,16 +98,16 @@ MACRO memCopy2X
     ELSE
         ld bc, \2.end - \2 + $0101
     ENDC
-    jr .skip\@
-.loop\@:
+    jr :++
+:
     ld a, [hli]
     ld [de], a
     inc de
     ld [de], a
     inc de
-.skip\@:
+:
     dec c
-    jr nz, .loop\@
+    jr nz, :--
     dec b
-    jr nz, .loop\@
+    jr nz, :--
 ENDM
