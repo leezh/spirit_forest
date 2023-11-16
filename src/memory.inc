@@ -111,3 +111,39 @@ MACRO memCopy2X
     dec b
     jr nz, :--
 ENDM
+
+
+; Loads a block of data from one memory range to another. Mainly for use in
+; conjunction with labels and the `LOAD` assembly directive, e.g.:
+; ```
+;     SECTION "InitFunction", ROM0
+;     InitFunction::
+;         memLoad Function, FunctionData
+;         ret
+;     FunctionData:
+;         LOAD "Function", HRAM
+;     Function::
+;         ; Code here
+;     .end
+;         ENDL
+; ```
+;
+; Args:
+; * pDest   - Pointer to the destination data. Should have a local label `.end`
+;             to mark the end of the data
+; * pSource - Pointer to the source data.
+MACRO memLoad
+    ld de, \1
+    ld hl, \2
+    ld bc, \1.end - \1 + $101
+    jr :++
+:
+    ld a, [hli]
+    ld [de], a
+    inc de
+:
+    dec c
+    jr nz, :--
+    dec b
+    jr nz, :--
+ENDM

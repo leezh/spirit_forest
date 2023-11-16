@@ -3,7 +3,7 @@ INCLUDE "memory.inc"
 
 SECTION "InitDMATransfer", ROM0
 InitDMATransfer::
-    memCopy DMATransfer, DMATransferRoutine, DMATransfer.end - DMATransfer
+    memLoad DMATransfer, DMATransferRoutine
     ret
 
 
