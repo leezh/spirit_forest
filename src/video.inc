@@ -1,3 +1,5 @@
+DEF _ShadowOAM EQU $CF00
+
 ; Waits until screen blank
 MACRO waitVBlank
 :

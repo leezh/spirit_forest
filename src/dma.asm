@@ -1,5 +1,12 @@
 INCLUDE "ext/hardware.inc"
 INCLUDE "memory.inc"
+INCLUDE "video.inc"
+
+
+SECTION UNION "ShadowOAM", WRAM0[_ShadowOAM]
+ShadowOAM::
+    ds 4 * OAM_COUNT
+
 
 SECTION "InitDMATransfer", ROM0
 InitDMATransfer::
@@ -11,7 +18,7 @@ DMATransferRoutine:
     LOAD "DMATransfer", HRAM
 DMATransfer::
     di
-    ld a, $C1
+    ld a, HIGH(ShadowOAM)
     ld [rDMA], a
     ld a, OAM_COUNT
 :
