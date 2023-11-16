@@ -2,21 +2,22 @@ PROJECT_NAME = spirit_forest
 VERSION      = 0
 GAMEID       = SPRF
 TITLE        = SPIRIFOREST
-LICENSEE     = HB
-OLD_LICENSEE = 0x33
+LICENSEE     = HB # Homebrew
+OLD_LICENSEE = 0x33 # Required for SGB compatibility
 CART_TYPE    = MBC3+RAM+BATTERY
+RGBDS_HOME   =
+RUNNER       = mgba
 
 OBJDIR   = obj/
 SRCDIR   = src/
 INCLUDES = $(SRCDIR)
 
-ASM    = rgbasm
-GFX    = rgbgfx
-LINK   = rgblink
-FIX    = rgbfix
+ASM    = $(RGBDS_HOME)rgbasm
+GFX    = $(RGBDS_HOME)rgbgfx
+LINK   = $(RGBDS_HOME)rgblink
+FIX    = $(RGBDS_HOME)rgbfix
 RM     = rm -f
 MKDIR  = mkdir -p
-RUNNER = flatpak run io.mgba.mGBA
 
 BIN  = $(PROJECT_NAME).gb
 SYM  = $(OBJDIR)$(PROJECT_NAME).sym
@@ -44,7 +45,7 @@ all: $(BIN)
 rebuild: clean all
 
 run: $(BIN)
-	$(RUNNER) $(BIN) &> /dev/null
+	$(RUNNER) $(BIN)
 
 $(BIN): $(OBJDIR) $(OBJS)
 	$(LINK) $(LINK_FLAGS) -o $(BIN) -n $(SYM) $(OBJS)
