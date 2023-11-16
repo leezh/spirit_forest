@@ -20,7 +20,7 @@ RM     = rm -f
 MKDIR  = mkdir -p
 
 BIN  = $(PROJECT_NAME).gb
-SYM  = $(OBJDIR)$(PROJECT_NAME).sym
+SYM  = $(PROJECT_NAME).sym
 SRCS = $(notdir $(wildcard $(SRCDIR)*.asm))
 OBJS = $(SRCS:%.asm=$(OBJDIR)%.o)
 
