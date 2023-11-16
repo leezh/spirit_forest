@@ -35,6 +35,7 @@ Main:
 
 GameLoop:
     waitVBlank
+    call UpdateGamepad
     call DMATransfer
     jp GameLoop
 
