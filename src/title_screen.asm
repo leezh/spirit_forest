@@ -14,7 +14,7 @@ MenuSelection:
 
 SECTION "TitleScreen", ROMX, BANK[1]
 TitleScreen::
-    resetVideo
+    call ResetScreen
     tileBlitRow _SCRN0, 4, 8, textTitle
     ld a, LCDCF_ON | LCDCF_BGON | LCDCF_BLK01
     ld [rLCDC], a

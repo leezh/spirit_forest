@@ -58,3 +58,4 @@ UpdateGamepad::
     xor $FF
     and c
     ld [GamepadJustReleased], a
+    ret

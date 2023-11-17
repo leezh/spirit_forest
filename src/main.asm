@@ -10,12 +10,10 @@ SECTION "Header", ROM0[$0100]
 SECTION "Main", ROM0
 Main:
     ld a, 0
-    ld [rLCDC], a
     ld [rNR52], a
+    call InitVideo
     memSet _RAM, $00, $2000
-    memSet _VRAM, $00, $2000
     memCopy2X _VRAM + $200, Font
-    call InitDMATransfer
     jp TitleScreen
 
 
