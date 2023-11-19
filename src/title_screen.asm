@@ -3,10 +3,15 @@ INCLUDE "memory.inc"
 INCLUDE "video.inc"
 
 SECTION UNION "ShadowOAM", WRAM0[_ShadowOAM]
-CursorLeft:
-    ds 4
-CursorRight:
-    ds 4
+Cursor:
+.y
+    ds 1
+.x
+    ds 1
+.tile
+    ds 1
+.attr
+    ds 1
 
 SECTION UNION "TitleScreenData", WRAM0
 MenuSelection:
@@ -33,14 +38,10 @@ TitleScreen::
     ld a, LCDCF_ON | LCDCF_BGON | LCDCF_BLK01 | LCDCF_OBJON
     ld [rLCDC], a
 
-    ld a, OAM_X_OFS + 4 * 8
-    ld [CursorLeft + 1], a
-    ld a, "["
-    ld [CursorLeft + 2], a
-    ld a, SCRN_X - 4 * 8
-    ld [CursorRight + 1], a
-    ld a, "]"
-    ld [CursorRight + 2], a
+    ld a, OAM_X_OFS + 40
+    ld [Cursor.x], a
+    ld a, "~"
+    ld [Cursor.tile], a
     ld a, 1
     ld [MenuSelection], a
 
@@ -73,8 +74,7 @@ TitleScreen::
     dec b
     jr nz, :-
     sub 16
-    ld [CursorLeft], a
-    ld [CursorRight], a
+    ld [Cursor.y], a
 
     waitVBlank
     call DMATransfer

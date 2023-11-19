@@ -10,8 +10,12 @@ ShadowOAM::
 
 SECTION "InitVideo", ROM0
 InitVideo::
+    call ResetScreen
     memLoad DMATransfer, DMATransferRoutine
     memSet _VRAM, $00, $2000
+    memCopy2X _VRAM + $200, Font
+    ret
+
 ResetScreen::
     ld a, 0
     ld [rLCDC], a
@@ -26,6 +30,11 @@ ResetScreen::
     memSet _SCRN0, $00, $400
     memSet _ShadowOAM, $00, $FF
     ret
+
+
+Font:
+    INCBIN "font.1bpp"
+.end
 
 
 DMATransferRoutine:

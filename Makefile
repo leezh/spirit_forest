@@ -10,7 +10,8 @@ RUNNER       = mgba
 
 OBJDIR   = obj/
 SRCDIR   = src/
-INCLUDES = $(SRCDIR)
+RESDIR   = res/
+INCLUDES = $(SRCDIR) $(OBJDIR)
 
 ASM    = $(RGBDS_HOME)rgbasm
 GFX    = $(RGBDS_HOME)rgbgfx
@@ -23,6 +24,9 @@ BIN  = $(PROJECT_NAME).gb
 SYM  = $(PROJECT_NAME).sym
 SRCS = $(notdir $(wildcard $(SRCDIR)*.asm))
 OBJS = $(SRCS:%.asm=$(OBJDIR)%.o)
+PNG1 = $(notdir $(wildcard $(RESDIR)*.1bpp.png))
+PNG2 = $(notdir $(wildcard $(RESDIR)*.2bpp.png))
+IMGS = $(PNG1:%.png=$(OBJDIR)%) $(PNG2:%.png=$(OBJDIR)%)
 
 ASM_FLAGS += -l $(addprefix -I,$(INCLUDES))
 
@@ -47,15 +51,24 @@ rebuild: clean all
 run: $(BIN)
 	$(RUNNER) $(BIN)
 
-$(BIN): $(OBJDIR) $(OBJS)
+images: $(IMGS)
+
+$(BIN): $(OBJDIR) $(IMGS) $(OBJS)
 	$(LINK) $(LINK_FLAGS) -o $(BIN) -n $(SYM) $(OBJS)
 	$(FIX) $(FIX_FLAGS) $(BIN)
 
 $(OBJDIR)%.o: $(SRCDIR)%.asm
 	$(ASM) $(ASM_FLAGS) -o $@ $<
 
+$(OBJDIR)%.1bpp: $(RESDIR)%.1bpp.png
+	$(GFX) $(GFX_FLAGS) -d 1 -o $@ $< @$(RESDIR)$*.flags
+
+$(OBJDIR)%.2bpp: $(RESDIR)%.2bpp.png
+	$(GFX) $(GFX_FLAGS) -d 2 -c gpl:$(RESDIR)palette.gpl -o $@ $< @$(RESDIR)$*.flags
+
 $(OBJDIR):
 	$(MKDIR) $(OBJDIR)
 
 clean:
-	$(RM) $(BIN) $(SYM) $(OBJS)
+	$(RM) $(BIN) $(SYM) $(OBJS) $(IMGS)
+
