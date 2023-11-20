@@ -35,7 +35,7 @@ TitleScreen::
     
     tileBlitRow _SCRN0, 6, 12, textNewGame
     tileBlitRow _SCRN0, 6, 14, textContinue
-    drawWindowFrame _SCRN0, 2, 10, 15, 6
+    drawWindowFrame _SCRN0, 2, 10, 16, 7
     ld a, LCDCF_ON | LCDCF_BGON | LCDCF_BLK01 | LCDCF_OBJON
     ld [rLCDC], a
 

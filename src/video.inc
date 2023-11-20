@@ -76,32 +76,31 @@ MACRO drawWindowFrame
     ld a, WindowTopLeft
     ld [de], a
     ld a, WindowHorizontal
-    REPT \4 - 1
+    REPT \4 - 2
         inc de
         ld [de], a
     ENDR
-    ld de, \1 + SCRN_VX_B * \3 +  (\2 + \4)
+    ld de, \1 + SCRN_VX_B * \3 +  (\2 + \4 - 1)
     ld a, WindowTopRight
     ld [de], a
 
-    ld de, \1 + SCRN_VX_B * (\3 + \5) + \2
+    ld de, \1 + SCRN_VX_B * (\3 + \5 - 1) + \2
     ld a, WindowBottomLeft
     ld [de], a
     ld a, WindowHorizontal
-    REPT \4 - 1
+    REPT \4 - 2
         inc de
         ld [de], a
     ENDR
-    ld de, \1 + SCRN_VX_B * (\3 + \5) + (\2 + \4)
+    ld de, \1 + SCRN_VX_B * (\3 + \5 - 1) + (\2 + \4 - 1)
     ld a, WindowBottomRight
     ld [de], a
 
     ld a, WindowVertical
-    FOR V, \3 + 1, \3 + \5
+    FOR V, \3 + 1, \3 + \5 - 1
         ld de, \1 + SCRN_VX_B * V + \2
         ld [de], a
-        ld de, \1 + SCRN_VX_B * V + (\2 + \4)
+        ld de, \1 + SCRN_VX_B * V + (\2 + \4 - 1)
         ld [de], a
     ENDR
-    
 ENDM
