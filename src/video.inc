@@ -46,3 +46,62 @@ MACRO tileBlitRow
     dec b
     jr nz, :--
 ENDM
+
+
+DEF WindowTopLeft = "["
+DEF WindowTopRight = "]"
+DEF WindowBottomLeft = "\{"
+DEF WindowBottomRight = "\}"
+DEF WindowHorizontal = "\\"
+DEF WindowVertical = "|"
+
+; Draws a window frame using the built-in bitmap font.
+;
+; Args:
+; * pSCRN  - Pointer to the tilemap to blit to.
+; * x      - The x-coordinate of the top-left corner.
+; * y      - The y-coordinate of the top-right corner.
+; * w      - Width of the window.
+; * h      - Height of the window.
+;
+; Specify the tiles used by redefining these:
+; * WindowTopLeft
+; * WindowTopRight
+; * WindowBottomLeft
+; * WindowBottomLeft
+; * WindowHorizontal
+; * WindowVertical
+MACRO drawWindowFrame
+    ld de, \1 + SCRN_VX_B * \3 + \2
+    ld a, WindowTopLeft
+    ld [de], a
+    ld a, WindowHorizontal
+    REPT \4 - 1
+        inc de
+        ld [de], a
+    ENDR
+    ld de, \1 + SCRN_VX_B * \3 +  (\2 + \4)
+    ld a, WindowTopRight
+    ld [de], a
+
+    ld de, \1 + SCRN_VX_B * (\3 + \5) + \2
+    ld a, WindowBottomLeft
+    ld [de], a
+    ld a, WindowHorizontal
+    REPT \4 - 1
+        inc de
+        ld [de], a
+    ENDR
+    ld de, \1 + SCRN_VX_B * (\3 + \5) + (\2 + \4)
+    ld a, WindowBottomRight
+    ld [de], a
+
+    ld a, WindowVertical
+    FOR V, \3 + 1, \3 + \5
+        ld de, \1 + SCRN_VX_B * V + \2
+        ld [de], a
+        ld de, \1 + SCRN_VX_B * V + (\2 + \4)
+        ld [de], a
+    ENDR
+    
+ENDM

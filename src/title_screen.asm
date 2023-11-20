@@ -35,6 +35,7 @@ TitleScreen::
     
     tileBlitRow _SCRN0, 6, 12, textNewGame
     tileBlitRow _SCRN0, 6, 14, textContinue
+    drawWindowFrame _SCRN0, 2, 10, 15, 6
     ld a, LCDCF_ON | LCDCF_BGON | LCDCF_BLK01 | LCDCF_OBJON
     ld [rLCDC], a
 
@@ -68,12 +69,11 @@ TitleScreen::
     :
     ld a, [MenuSelection]
     ld b, a
-    ld a, OAM_Y_OFS + 12 * 8
+    ld a, OAM_Y_OFS + (12 - 2) * 8
     :
-    add 16
+    add 2 * 8
     dec b
     jr nz, :-
-    sub 16
     ld [Cursor.y], a
 
     waitVBlank
