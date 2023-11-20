@@ -8,9 +8,13 @@ SECTION "Header", ROM0[$0100]
 
 SECTION "Main", ROM0
 Main:
+    di
     ld a, 0
     ld [rNR52], a
+    ld a, BANK(InitVideo)
+    ld [rROMB0], a
     call InitVideo
     memSet _RAM, $00, $2000
+    ei
     jp TitleScreen
 

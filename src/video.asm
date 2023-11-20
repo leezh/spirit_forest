@@ -4,17 +4,12 @@ INCLUDE "video.inc"
 
 
 SECTION UNION "ShadowOAM", WRAM0[_ShadowOAM]
+
 ShadowOAM::
     ds 4 * OAM_COUNT
 
 
-SECTION "InitVideo", ROM0
-InitVideo::
-    call ResetScreen
-    memLoad DMATransfer, DMATransferRoutine
-    memSet _VRAM, $00, $2000
-    memCopy2X _VRAM + $200, Font
-    ret
+SECTION "Video", ROM0
 
 ResetScreen::
     ld a, 0
@@ -29,6 +24,16 @@ ResetScreen::
 
     memSet _SCRN0, $00, $400
     memSet _ShadowOAM, $00, $FF
+    ret
+
+
+SECTION "InitVideo", ROMX, BANK[1]
+
+InitVideo::
+    call ResetScreen
+    memLoad DMATransfer, DMATransferRoutine
+    memSet _VRAM, $00, $2000
+    memCopy2X _VRAM + $200, Font
     ret
 
 
