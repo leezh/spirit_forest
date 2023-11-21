@@ -20,7 +20,8 @@ MenuSelection:
 SECTION "TitleScreen", ROMX, BANK[1]
 TitleScreen::
     call ResetScreen
-    tileBlitRow _SCRN0, 4, 8, textTitle
+    memCopy _VRAM + $800, TitleBanner
+    tileBlit _SCRN0, 3, 6, 14, 3, TitleBannerMap, $80
     ld a, LCDCF_ON | LCDCF_BGON | LCDCF_BLK01
     ld [rLCDC], a
     ld a, 8 * 8
@@ -91,4 +92,12 @@ textNewGame:
 
 textContinue:
     db "Continue"
+.end:
+
+TitleBanner:
+    INCBIN "title.2bpp"
+.end:
+
+TitleBannerMap:
+    INCBIN "title.tilemap"
 .end:

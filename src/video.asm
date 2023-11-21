@@ -22,7 +22,7 @@ ResetScreen::
     ld [rOBP0], a
     ld [rOBP1], a
 
-    memSet _SCRN0, $00, $400
+    memSet _SCRN0, $FF, $400
     memSet _ShadowOAM, $00, $FF
     ret
 
