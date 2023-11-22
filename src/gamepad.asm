@@ -30,8 +30,8 @@ UpdateGamepad::
         ld a, [rP1]
     ENDR
     ld a, [rP1]
-    and $F
-    xor $F
+    and a, $F
+    xor a, $F
     ld b, a
 
     ; Get DPad states
@@ -40,22 +40,21 @@ UpdateGamepad::
     REPT 5
         ld a, [rP1]
     ENDR
-    REPT 4
-        sla a
-    ENDR
-    xor $F0
-    or b
+    and a, $F
+    xor a, $F
+    swap a
+    or a, b
     ld b, a
 
     ; Calculate and write state
     ld a, [GamepadPressed]
-    xor b
+    xor a, b
     ld c, a
-    and b
+    and a, b
     ld [GamepadJustPressed], a
     ld a, b
     ld [GamepadPressed], a
     xor $FF
-    and c
+    and a, c
     ld [GamepadJustReleased], a
     ret
