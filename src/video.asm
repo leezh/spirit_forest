@@ -37,11 +37,16 @@ DrawBox::
 
 SECTION "Video", ROM0
 
+; Turns off the LCD, clears the BG/WIN tiles and sets video parameters to
+; sensible defaults.
 ResetScreen::
     ld a, 0
     ld [rLCDC], a
     ld [rSCX], a
     ld [rSCY], a
+    ld [rWX], a
+    ld a, WX_OFS
+    ld [rWY], a
 
     ld a, %11100100
     ld [rBGP], a
@@ -52,6 +57,23 @@ ResetScreen::
     memSet _ShadowOAM, $00, $FF
     ret
 
+; Draws a window frame in the BG/WIN tilemap. Should be at least 3 tiles wide
+; and at least 3 tiles high.
+;
+; Registers:
+; * hl - Pointer to tilemap to write to
+;
+; WRAM Variables Used:
+; * DrawBox.x
+; * DrawBox.y
+; * DrawBox.width
+; * DrawBox.height
+; * WindowFrameTiles.topLeft
+; * WindowFrameTiles.topRight
+; * WindowFrameTiles.bottomLeft
+; * WindowFrameTiles.bottomRight
+; * WindowFrameTiles.horizontal
+; * WindowFrameTiles.vertical
 DrawWindowFrame::
     ld a, [DrawBox.width]
     cp a, 3
@@ -130,6 +152,8 @@ DrawWindowFrame::
 
 SECTION "InitVideo", ROMX, BANK[1]
 
+; Clears the video memory and uploads video font maps and the OAM transfer
+; routine.
 InitVideo::
     call ResetScreen
     memLoad DMATransfer, DMATransferRoutine
@@ -152,6 +176,8 @@ Font:
 
 DMATransferRoutine:
     LOAD "DMATransfer", HRAM
+
+; Uploads the contents of the ShadowOAM to the GameBoy's internal sprite memory
 DMATransfer::
     di
     ld a, HIGH(ShadowOAM)
