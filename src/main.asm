@@ -11,10 +11,10 @@ Main:
     di
     ld a, 0
     ld [rNR52], a
+    ld [rLCDC], a
     ld a, BANK(InitVideo)
     ld [rROMB0], a
+    memSet _RAM, $FF, $2000
     call InitVideo
-    memSet _RAM, $00, $2000
     ei
     jp TitleScreen
-

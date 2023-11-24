@@ -22,7 +22,7 @@ TitleScreen::
     call ResetScreen
     memCopy _VRAM + $800, TitleBanner
     tileBlit _SCRN0, 3, 6, 14, 3, TitleBannerMap, $80
-    ld a, LCDCF_ON | LCDCF_BGON | LCDCF_BLK01
+    ld a, LCDCF_ON | LCDCF_BGON
     ld [rLCDC], a
     ld a, 8 * 8
     ld [rSCY], a
@@ -36,13 +36,24 @@ TitleScreen::
     
     tileBlitRow _SCRN0, 6, 12, textNewGame
     tileBlitRow _SCRN0, 6, 14, textContinue
-    drawWindowFrame _SCRN0, 2, 10, 16, 7
-    ld a, LCDCF_ON | LCDCF_BGON | LCDCF_BLK01 | LCDCF_OBJON
+
+    ld a, 2
+    ld [DrawBox.x], a
+    ld a, 10
+    ld [DrawBox.y], a
+    ld a, 16
+    ld [DrawBox.width], a
+    ld a, 7
+    ld [DrawBox.height], a
+    ld hl, _SCRN0
+    call DrawWindowFrame
+
+    ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON
     ld [rLCDC], a
 
     ld a, OAM_X_OFS + 40
     ld [Cursor.x], a
-    ld a, "~"
+    ld a, CursorTile
     ld [Cursor.tile], a
     ld a, 1
     ld [MenuSelection], a
