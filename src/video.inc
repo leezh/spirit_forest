@@ -1,23 +1,5 @@
 DEF _ShadowOAM EQU $CF00
 
-; Waits until screen blank
-MACRO waitVBlank
-:
-    ld a, [rLY]
-    cp a, SCRN_Y
-    jr c, :-
-ENDM
-
-
-; Waits until screen blank ends
-MACRO waitVBlankEnd
-:
-    ld a, [rLY]
-    cp a, SCRN_Y
-    jr nc, :-
-ENDM
-
-
 ; Transfers one row of data to the specified tilemap. Useful for printing text.
 ;
 ; Args:

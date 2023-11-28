@@ -57,6 +57,7 @@ ResetScreen::
     memSet _ShadowOAM, $00, $FF
     ret
 
+
 ; Draws a window frame in the BG/WIN tilemap. Should be at least 3 tiles wide
 ; and at least 3 tiles high.
 ;
@@ -149,6 +150,23 @@ DrawWindowFrame::
     jr nz, :-
 
     ret
+
+
+; Waits until screen blank
+WaitVBlank::
+    ld a, [rLY]
+    cp a, SCRN_Y
+    ret z
+    jr WaitVBlank
+
+
+; Waits until screen blank ends
+WaitVBlankEnd::
+    ld a, [rLY]
+    cp a, SCRN_Y
+    ret nz
+    jr WaitVBlankEnd
+
 
 SECTION "InitVideo", ROMX, BANK[1]
 

@@ -27,8 +27,8 @@ TitleScreen::
     ld a, 8 * 8
     ld [rSCY], a
 .animateIn:
-    waitVBlankEnd
-    waitVBlank
+    call WaitVBlankEnd
+    call WaitVBlank
     ld a, [rSCY]
     dec a
     ld [rSCY], a
@@ -59,6 +59,8 @@ TitleScreen::
     ld [MenuSelection], a
 
 .loop:
+    call WaitVBlankEnd
+    call WaitVBlank
     call UpdateGamepad
 
     ld a, [GamepadJustPressed]
@@ -88,7 +90,6 @@ TitleScreen::
     jr nz, :-
     ld [Cursor.y], a
 
-    waitVBlank
     call DMATransfer
     jp .loop
 
