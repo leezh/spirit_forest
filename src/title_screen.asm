@@ -21,7 +21,21 @@ SECTION "TitleScreen", ROMX, BANK[1]
 TitleScreen::
     call ResetScreen
     memCopy _VRAM + $800, TitleBanner
-    tileBlit _SCRN0, 3, 6, 14, 3, TitleBannerMap, $80
+
+    ld a, 3
+    ld [DrawBox.x], a
+    ld a, 6
+    ld [DrawBox.y], a
+    ld a, 14
+    ld [DrawBox.width], a
+    ld a, 3
+    ld [DrawBox.height], a
+    ld a, $80
+    ld [DrawBox.tileOffset], a
+    ld de, TitleBannerMap
+    ld hl, _SCRN0
+    call BlitTiles
+
     ld a, LCDCF_ON | LCDCF_BGON
     ld [rLCDC], a
     ld a, 8 * 8
@@ -33,9 +47,9 @@ TitleScreen::
     dec a
     ld [rSCY], a
     jr nz, .animateIn
-    
-    tileBlitRow _SCRN0, 6, 12, textNewGame
-    tileBlitRow _SCRN0, 6, 14, textContinue
+.drawMenu:
+    tileBlitRow _SCRN0, 6, 12, textContinue
+    tileBlitRow _SCRN0, 6, 14, textNewGame
 
     ld a, 2
     ld [DrawBox.x], a
@@ -48,15 +62,17 @@ TitleScreen::
     ld hl, _SCRN0
     call DrawWindowFrame
 
-    ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON
-    ld [rLCDC], a
-
     ld a, OAM_X_OFS + 40
     ld [Cursor.x], a
+    ld a, OAM_Y_OFS + 12 * 8
+    ld [Cursor.y], a
     ld a, CursorTile
     ld [Cursor.tile], a
-    ld a, 1
+    ld a, 0
     ld [MenuSelection], a
+
+    ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON
+    ld [rLCDC], a
 
 .loop:
     call WaitVBlankEnd
@@ -67,43 +83,38 @@ TitleScreen::
     and PADF_UP
     jr z, :+
     ld a, [MenuSelection]
-    cp a, 1
+    cp a, 0
     jr z, :+
     dec a
     ld [MenuSelection], a
-    :
+    ld a, [Cursor.y]
+    sub 2 * 8
+    ld [Cursor.y], a
+:
     ld a, [GamepadJustPressed]
     and PADF_DOWN
     jr z, :+
     ld a, [MenuSelection]
-    cp a, 2
+    cp a, 1
     jr z, :+
     inc a
     ld [MenuSelection], a
-    :
-    ld a, [MenuSelection]
-    ld b, a
-    ld a, OAM_Y_OFS + (12 - 2) * 8
-    :
+    ld a, [Cursor.y]
     add 2 * 8
-    dec b
-    jr nz, :-
     ld [Cursor.y], a
+:
+    ld a, [GamepadJustPressed]
+    and PADF_A
 
     call DMATransfer
     jp .loop
 
-
-textTitle:
-    db "SpiritForest"
+textContinue:
+    db "Continue"
 .end:
 
 textNewGame:
     db "New Game"
-.end:
-
-textContinue:
-    db "Continue"
 .end:
 
 TitleBanner:

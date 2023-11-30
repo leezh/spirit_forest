@@ -29,40 +29,4 @@ MACRO tileBlitRow
     jr nz, :--
 ENDM
 
-
-; Transfers data to the specified tilemap.
-;
-; Args:
-; * pSCRN   - Pointer to the tilemap to blit to.
-; * x       - The x-coordinate of the text.
-; * y       - The y-coordinate of the text.
-; * w       - Width of the source data
-; * h       - Height of the source data.
-; * pSource - Pointer to the start of the data.
-; * offset  - Tile index offset
-MACRO tileBlit
-    ld de, \1 + SCRN_VX_B * \3 + \2
-    ld b, \4 + $1
-    ld hl, \6
-    ld c, \5
-    jr :++
-:
-    ld a, [hli]
-    add a, \7
-    ld [de], a
-    inc de
-:
-    dec b
-    jr nz, :--
-    ld b, \4
-    ld a, e
-    add a, 32 - \4
-    ld e, a
-    jr nc, :+
-    inc d
-:
-    dec c
-    jr nz, :---
-ENDM
-
 DEF CursorTile = $FE

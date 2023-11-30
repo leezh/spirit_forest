@@ -34,6 +34,8 @@ DrawBox::
     ds 1
 .height::
     ds 1
+.tileOffset::
+    ds 1
 
 SECTION "Video", ROM0
 
@@ -56,6 +58,61 @@ ResetScreen::
     memSet _SCRN0, $FF, $400
     memSet _ShadowOAM, $00, $FF
     ret
+
+; Transfers tiles to the specified tilemap.
+;
+; Registers:
+; * de - Pointer to tile indices to read from
+; * hl - Pointer to tilemap to write to
+;
+;
+; WRAM Variables Used:
+; * DrawBox.x
+; * DrawBox.y
+; * DrawBox.width
+; * DrawBox.height
+; * DrawBox.tileOffset
+BlitTiles::
+    ld bc, SCRN_VX_B
+    ld a, [DrawBox.y]
+    cp a, 0
+:
+    jr z, :+
+    add hl, bc
+    dec a
+    jr :-
+:
+    ld a, [DrawBox.x]
+    ld c, a
+    add hl, bc
+
+    ld a, [DrawBox.width]
+    cp a, 0
+    ret z
+    ld b, a
+    ld a, SCRN_VX_B
+    sub b
+    ld c, a
+:
+    ld a, [de]
+    inc de
+    push hl
+    ld hl, DrawBox.tileOffset
+    add a, [hl]
+    pop hl
+    ld [hli], a
+    dec b
+    jr nz, :-
+
+    ld a, [DrawBox.height]
+    dec a
+    ret z
+    ld [DrawBox.height], a
+    ld b, 0
+    add hl, bc
+    ld a, [DrawBox.width]
+    ld b, a
+    jr :-
 
 
 ; Draws a window frame in the BG/WIN tilemap. Should be at least 3 tiles wide
