@@ -5,23 +5,22 @@
 ; * value - Value to fill the data with.
 ; * size  - Size of the data to fill in bytes.
 MACRO memSet
+    ASSERT \3 > 0
     ld hl, \1
     ld a, \2
-    IF \3 > $FE
-        ld bc, \3 + $101
+    IF \3 > $FF
+        ld bc, \3
     ELSE
-        ld b, \3 + $1
+        ld b, \3
     ENDC
-    jr :++
-:
+.memSetLoop\@
     ld [hli], a
-:
-    IF \3 > $FE
+    IF \3 > $FF
         dec c
-        jr nz, :--
+        jr nz, .memSetLoop\@
     ENDC
     dec b
-    jr nz, :--
+    jr nz, .memSetLoop\@
 ENDM
 
 
@@ -37,20 +36,20 @@ MACRO memCopy
     ld de, \1
     ld hl, \2
     IF _NARG == 3
-        ld bc, \3 + $101
+        ASSERT \3 > 0
+        ld bc, \3 + $100
     ELSE
-        ld bc, \2.end - \2 + $101
+        ASSERT \2.end - \2 > 0
+        ld bc, \2.end - \2 + $100
     ENDC
-    jr :++
-:
+.memCopyLoop\@
     ld a, [hli]
     ld [de], a
     inc de
-:
     dec c
-    jr nz, :--
+    jr nz, .memCopyLoop\@
     dec b
-    jr nz, :--
+    jr nz, .memCopyLoop\@
 ENDM
 
 
@@ -66,18 +65,20 @@ MACRO memCopySmall
     ld de, \1
     ld hl, \2
     IF _NARG == 3
-        ld b, \3 + $1
+        ASSERT \3 > 0
+        ASSERT \3 <= $FF
+        ld b, \3 + $100
     ELSE
-        ld b, \2.end - \2 + $1
+        ASSERT \2.end - \2 > 0
+        ASSERT \2.end - \2 <= $FF
+        ld b, \2.end - \2
     ENDC
-    jr :++
-:
+.memCopyLoop\@
     ld a, [hli]
     ld [de], a
     inc de
-:
     dec b
-    jr nz, :--
+    jr nz, .memCopyLoop\@
 ENDM
 
 
@@ -94,22 +95,22 @@ MACRO memCopy2X
     ld de, \1
     ld hl, \2
     IF _NARG == 3
-        ld bc, \3 + $0101
+        ASSERT \3 > 0
+        ld bc, \3 + $100
     ELSE
-        ld bc, \2.end - \2 + $0101
+        ASSERT \2.end - \2 > 0
+        ld bc, \2.end - \2 + $100
     ENDC
-    jr :++
-:
+.memCopyLoop\@
     ld a, [hli]
     ld [de], a
     inc de
     ld [de], a
     inc de
-:
     dec c
-    jr nz, :--
+    jr nz, .memCopyLoop\@
     dec b
-    jr nz, :--
+    jr nz, .memCopyLoop\@
 ENDM
 
 
@@ -133,17 +134,16 @@ ENDM
 ;             to mark the end of the data
 ; * pSource - Pointer to the source data.
 MACRO memLoad
+    ASSERT \1.end - \1 > 0
     ld de, \1
     ld hl, \2
-    ld bc, \1.end - \1 + $101
-    jr :++
-:
+    ld bc, \1.end - \1 + $100
+.memLoadLoop\@
     ld a, [hli]
     ld [de], a
     inc de
-:
     dec c
-    jr nz, :--
+    jr nz, .memLoadLoop\@
     dec b
-    jr nz, :--
+    jr nz, .memLoadLoop\@
 ENDM
