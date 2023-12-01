@@ -229,6 +229,77 @@ WaitVBlankEnd::
     jr WaitVBlankEnd
 
 
+; Waits for the specified number of frames to pass
+;
+; Registers:
+; * a - The number of frames to wait
+WaitFrames::
+    ld b, a
+    cp a, 0
+.loop
+    ret z
+.waitVBlank
+    ld a, [rLY]
+    cp a, SCRN_Y
+    jr z, .waitVBlank
+.waitVBlankEnd
+    ld a, [rLY]
+    cp a, SCRN_Y
+    jr nz, .waitVBlankEnd
+    dec b
+    jr .loop
+
+
+; Runs a 15-frame screen fading animation using palette shifting. Shifts from
+; standard to white.
+FadeOut::
+    ld a, %10010000
+    ld [rBGP], a
+    ld [rOBP0], a
+    ld [rOBP1], a
+    ld a, 5
+    call WaitFrames
+    ld a, %01000000
+    ld [rBGP], a
+    ld [rOBP0], a
+    ld [rOBP1], a
+    ld a, 5
+    call WaitFrames
+    ld a, %00000000
+    ld [rBGP], a
+    ld [rOBP0], a
+    ld [rOBP1], a
+    ld a, 5
+    call WaitFrames
+    ret
+
+
+; Runs a 15-frame screen fading animation using palette shifting. Shifts from
+; white to standard.
+FadeIn::
+    ld a, %01000000
+    ld [rBGP], a
+    ld [rOBP0], a
+    ld [rOBP1], a
+    ld a, 5
+    call WaitFrames
+    ld a, %10010000
+    ld [rBGP], a
+    ld [rOBP0], a
+    ld [rOBP1], a
+    ld a, 5
+    call WaitFrames
+    ld a, %11100100
+    ld [rBGP], a
+    ld [rOBP0], a
+    ld [rOBP1], a
+    ld a, 5
+    call WaitFrames
+    ret
+
+
+
+
 SECTION "InitVideo", ROMX, BANK[1]
 
 ; Clears the video memory and uploads video font maps and the OAM transfer

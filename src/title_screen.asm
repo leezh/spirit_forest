@@ -87,6 +87,7 @@ TitleScreen::
     ld a, 0
     ld [MenuSelection], a
 
+    call DMATransfer
     ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON
     ld [rLCDC], a
 
@@ -121,14 +122,31 @@ TitleScreen::
 :
     ld a, [GamepadJustPressed]
     and PADF_A
+    ld c, 3
+    jr nz, .animateOut
 
     call DMATransfer
-    jp .loop
+    jr .loop
+
+.animateOut
+    ld a, LCDCF_ON | LCDCF_BGON
+    ld [rLCDC], a
+    ld a, 8
+    call WaitFrames
+    ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON
+    ld [rLCDC], a
+    ld a, 8
+    call WaitFrames
+    dec c
+    jr nz, .animateOut
+
+    call FadeOut
+    jp TitleScreen
 
 TitleBanner:
     INCBIN "title.2bpp"
-.end:
+.end
 
 TitleBannerMap:
     INCBIN "title.tilemap"
-.end:
+.end
