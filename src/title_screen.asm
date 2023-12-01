@@ -3,6 +3,7 @@ INCLUDE "memory.inc"
 INCLUDE "video.inc"
 
 SECTION UNION "ShadowOAM", WRAM0[_ShadowOAM]
+
 Cursor:
 .y
     ds 1
@@ -14,10 +15,12 @@ Cursor:
     ds 1
 
 SECTION UNION "TitleScreenData", WRAM0
+
 MenuSelection:
     ds 1
 
 SECTION "TitleScreen", ROMX, BANK[1]
+
 TitleScreen::
     call ResetScreen
     memCopy _VRAM + $800, TitleBanner
@@ -48,8 +51,21 @@ TitleScreen::
     ld [rSCY], a
     jr nz, .animateIn
 .drawMenu:
-    tileBlitRow _SCRN0, 6, 12, textContinue
-    tileBlitRow _SCRN0, 6, 14, textNewGame
+    ld a, 6
+    ld [DrawBox.x], a
+    ld a, 12
+    ld [DrawBox.y], a
+    ld a, $0
+    ld [DrawBox.tileOffset], a
+    ld hl, _SCRN0
+    staticPrint "Continue"
+    call BlitTiles
+
+    ld a, 14
+    ld [DrawBox.y], a
+    ld hl, _SCRN0
+    staticPrint "New Game"
+    call BlitTiles
 
     ld a, 2
     ld [DrawBox.x], a
@@ -108,14 +124,6 @@ TitleScreen::
 
     call DMATransfer
     jp .loop
-
-textContinue:
-    db "Continue"
-.end:
-
-textNewGame:
-    db "New Game"
-.end:
 
 TitleBanner:
     INCBIN "title.2bpp"

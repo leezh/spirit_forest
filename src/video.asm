@@ -73,46 +73,50 @@ ResetScreen::
 ; * DrawBox.height
 ; * DrawBox.tileOffset
 BlitTiles::
+    ld a, [DrawBox.height]
+    cp a, 0
+    ret z
+
     ld bc, SCRN_VX_B
     ld a, [DrawBox.y]
     cp a, 0
-:
-    jr z, :+
+.moveY
+    jr z, .moveX
     add hl, bc
     dec a
-    jr :-
-:
+    jr .moveY
+.moveX
     ld a, [DrawBox.x]
     ld c, a
     add hl, bc
-
+.drawRow
     ld a, [DrawBox.width]
     cp a, 0
     ret z
-    ld b, a
-    ld a, SCRN_VX_B
-    sub b
     ld c, a
-:
+    ld a, [DrawBox.tileOffset]
+    ld b, a
+.drawTile
     ld a, [de]
     inc de
-    push hl
-    ld hl, DrawBox.tileOffset
-    add a, [hl]
-    pop hl
+    add a, b
     ld [hli], a
-    dec b
-    jr nz, :-
+    dec c
+    jr nz, .drawTile
 
     ld a, [DrawBox.height]
     dec a
     ret z
     ld [DrawBox.height], a
-    ld b, 0
-    add hl, bc
+
     ld a, [DrawBox.width]
     ld b, a
-    jr :-
+    ld a, SCRN_VX_B
+    sub b
+    ld b, 0
+    ld c, a
+    add hl, bc
+    jr .drawRow
 
 
 ; Draws a window frame in the BG/WIN tilemap. Should be at least 3 tiles wide
@@ -143,12 +147,12 @@ DrawWindowFrame::
     ld bc, SCRN_VX_B
     ld a, [DrawBox.y]
     cp a, 0
-:
-    jr z, :+
+.moveY
+    jr z, .moveX
     add hl, bc
     dec a
-    jr :-
-:
+    jr .moveY
+.moveX
     ld a, [DrawBox.x]
     ld d, 0
     ld e, a
@@ -161,11 +165,11 @@ DrawWindowFrame::
     sub a, 2
     ld d, a
     ld a, [WindowFrameTiles.horizontal]
-:
+.topEdge
     ld [hli], a
     dec d
-    jr nz, :-
-
+    jr nz, .topEdge
+.topRight
     ld a, [WindowFrameTiles.topRight]
     ld [hl], a
 
@@ -174,11 +178,11 @@ DrawWindowFrame::
     ld d, a
     ld a, [WindowFrameTiles.vertical]
     add hl, bc
-:
+.rightEdge
     ld [hl], a
     add hl, bc
     dec d
-    jr nz, :-
+    jr nz, .rightEdge
 
     ld a, [WindowFrameTiles.bottomRight]
     ld [hld], a
@@ -187,10 +191,10 @@ DrawWindowFrame::
     sub a, 2
     ld d, a
     ld a, [WindowFrameTiles.horizontal]
-:
+.bottomEdge
     ld [hld], a
     dec d
-    jr nz, :-
+    jr nz, .bottomEdge
 
     ld a, [WindowFrameTiles.bottomLeft]
     ld [hl], a
@@ -200,11 +204,11 @@ DrawWindowFrame::
     sub a, 2
     ld d, a
     ld a, [WindowFrameTiles.vertical]
-:
+.leftEdge
     add hl, bc
     ld [hl], a
     dec d
-    jr nz, :-
+    jr nz, .leftEdge
 
     ret
 
