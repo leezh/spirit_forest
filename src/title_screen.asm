@@ -5,14 +5,7 @@ INCLUDE "video.inc"
 SECTION UNION "ShadowOAM", WRAM0[_ShadowOAM]
 
 Cursor:
-.y
-    ds 1
-.x
-    ds 1
-.tile
-    ds 1
-.attr
-    ds 1
+    structOAM
 
 SECTION UNION "TitleScreenData", WRAM0
 
