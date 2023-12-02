@@ -238,14 +238,14 @@ WaitFrames::
     cp a, 0
 .loop
     ret z
-.waitVBlank
-    ld a, [rLY]
-    cp a, SCRN_Y
-    jr z, .waitVBlank
 .waitVBlankEnd
     ld a, [rLY]
     cp a, SCRN_Y
     jr nz, .waitVBlankEnd
+.waitVBlank
+    ld a, [rLY]
+    cp a, SCRN_Y
+    jr z, .waitVBlank
     dec b
     jr .loop
 
@@ -296,8 +296,6 @@ FadeIn::
     ld a, 5
     call WaitFrames
     ret
-
-
 
 
 SECTION "InitVideo", ROMX, BANK[1]
