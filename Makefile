@@ -26,7 +26,11 @@ SRCS = $(notdir $(wildcard $(SRCDIR)*.asm))
 OBJS = $(SRCS:%.asm=$(OBJDIR)%.o)
 PNG1 = $(notdir $(wildcard $(RESDIR)*.1bpp.png))
 PNG2 = $(notdir $(wildcard $(RESDIR)*.2bpp.png))
-IMGS = $(PNG1:%.png=$(OBJDIR)%) $(PNG2:%.png=$(OBJDIR)%)
+PNGB = $(notdir $(wildcard $(RESDIR)*.blit.png))
+IMGS = $(PNG1:%.png=$(OBJDIR)%) \
+	   $(PNG2:%.png=$(OBJDIR)%) \
+	   $(PNGB:%.blit.png=$(OBJDIR)%.tilemap) \
+	   $(PNGB:%.blit.png=$(OBJDIR)%.2bpp)
 
 ASM_FLAGS += $(addprefix -I,$(INCLUDES))
 
@@ -45,6 +49,7 @@ FIX_FLAGS += -n $(VERSION)
 FIX_FLAGS += -t $(TITLE)
 FIX_FLAGS += -m $(CART_TYPE)
 
+.PHONY: all rebuild run clean images
 
 all: $(BIN)
 
@@ -63,10 +68,13 @@ $(OBJDIR)%.o: $(SRCDIR)%.asm
 	$(ASM) $(ASM_FLAGS) -o $@ $<
 
 $(OBJDIR)%.1bpp: $(RESDIR)%.1bpp.png
-	$(GFX) $(GFX_FLAGS) $(GFX_1BPP_FLAGS) -o $@ $< @$(RESDIR)$*.flags
+	$(GFX) $(GFX_FLAGS) $(GFX_1BPP_FLAGS) -o $@ $<
 
 $(OBJDIR)%.2bpp: $(RESDIR)%.2bpp.png
-	$(GFX) $(GFX_FLAGS) $(GFX_2BPP_FLAGS) -o $@ $< @$(RESDIR)$*.flags
+	$(GFX) $(GFX_FLAGS) $(GFX_2BPP_FLAGS) -o $@ $<
+
+$(OBJDIR)%.tilemap $(OBJDIR)%.2bpp: $(RESDIR)%.blit.png
+	$(GFX) $(GFX_FLAGS) $(GFX_2BPP_FLAGS) -o $(OBJDIR)$*.2bpp -t $(OBJDIR)$*.tilemap -u $<
 
 $(OBJDIR):
 	$(MKDIR) $(OBJDIR)
