@@ -16,7 +16,11 @@ SECTION "TitleScreen", ROMX, BANK[1]
 
 TitleScreen::
     call ResetScreen
-    memCopy _VRAM + $800, TitleBanner
+
+    ld bc, TitleBanner.end - TitleBanner
+    ld de, TitleBanner
+    ld hl, _VRAM + $800
+    call MemCopy
 
     ld a, 3
     ld [DrawBox.x], a

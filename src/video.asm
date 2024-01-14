@@ -304,11 +304,29 @@ SECTION "InitVideo", ROMX, BANK[1]
 ; routine.
 InitVideo::
     call ResetScreen
-    memLoad DMATransfer, DMATransferRoutine
+
+    ld bc, DMATransfer.end - DMATransfer
+    ld de, DMATransferRoutine
+    ld hl, DMATransfer
+    call MemCopy
+
     memSet _VRAM, $00, $2000
-    memCopy2X _VRAM + $1200, Font
-    memCopy2X _VRAM + CursorTile * $10, Font + ("~" - " ") * $8, $8
-    memCopySmall WindowFrameTiles, defaultWindowFrameTiles
+
+    ld bc, Font.end - Font
+    ld de, Font
+    ld hl, _VRAM + $1200
+    call MemCopy2X
+
+    ld bc, $8
+    ld de, Font + ("~" - " ") * $8
+    ld hl, _VRAM + CursorTile * $10
+    call MemCopy2X
+
+    ld bc, defaultWindowFrameTiles.end - defaultWindowFrameTiles
+    ld de, defaultWindowFrameTiles
+    ld hl, WindowFrameTiles
+    call MemCopy
+
     ret
 
 
