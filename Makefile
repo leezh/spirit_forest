@@ -31,6 +31,8 @@ IMGS = $(PNG1:%.png=$(OBJDIR)%) $(PNG2:%.png=$(OBJDIR)%)
 ASM_FLAGS += $(addprefix -I,$(INCLUDES))
 
 GFX_FLAGS +=
+GFX_1BPP_FLAGS += -d 1
+GFX_2BPP_FLAGS += -d 2 -c embedded
 
 LINK_FLAGS +=
 
@@ -61,10 +63,10 @@ $(OBJDIR)%.o: $(SRCDIR)%.asm
 	$(ASM) $(ASM_FLAGS) -o $@ $<
 
 $(OBJDIR)%.1bpp: $(RESDIR)%.1bpp.png
-	$(GFX) $(GFX_FLAGS) -d 1 -o $@ $< @$(RESDIR)$*.flags
+	$(GFX) $(GFX_FLAGS) $(GFX_1BPP_FLAGS) -o $@ $< @$(RESDIR)$*.flags
 
 $(OBJDIR)%.2bpp: $(RESDIR)%.2bpp.png
-	$(GFX) $(GFX_FLAGS) -d 2 -o $@ $< @$(RESDIR)$*.flags
+	$(GFX) $(GFX_FLAGS) $(GFX_2BPP_FLAGS) -o $@ $< @$(RESDIR)$*.flags
 
 $(OBJDIR):
 	$(MKDIR) $(OBJDIR)
