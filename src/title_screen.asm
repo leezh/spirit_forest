@@ -93,7 +93,7 @@ TitleScreen::
     call WaitVBlank
     call UpdateGamepad
 
-    ld a, [GamepadJustPressed]
+    ldh a, [GamepadJustPressed]
     and PADF_UP
     jr z, :+
     ld a, [MenuSelection]
@@ -105,7 +105,7 @@ TitleScreen::
     sub 2 * 8
     ld [Cursor.y], a
 :
-    ld a, [GamepadJustPressed]
+    ldh a, [GamepadJustPressed]
     and PADF_DOWN
     jr z, :+
     ld a, [MenuSelection]
@@ -117,7 +117,7 @@ TitleScreen::
     add 2 * 8
     ld [Cursor.y], a
 :
-    ld a, [GamepadJustPressed]
+    ldh a, [GamepadJustPressed]
     and PADF_A
     ld c, 3
     jr nz, .animateOut

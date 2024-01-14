@@ -1,6 +1,6 @@
 INCLUDE "ext/hardware.inc"
 
-SECTION "Gamepad WRAM variables", WRAM0
+SECTION "Gamepad WRAM variables", HRAM
 
 ; Bitfield of currently pressed buttons.
 GamepadPressed::
@@ -47,14 +47,14 @@ UpdateGamepad::
     ld b, a
 
     ; Calculate and write state
-    ld a, [GamepadPressed]
+    ldh a, [GamepadPressed]
     xor a, b
     ld c, a
     and a, b
-    ld [GamepadJustPressed], a
+    ldh [GamepadJustPressed], a
     ld a, b
-    ld [GamepadPressed], a
+    ldh [GamepadPressed], a
     xor $FF
     and a, c
-    ld [GamepadJustReleased], a
+    ldh [GamepadJustReleased], a
     ret
