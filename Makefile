@@ -28,7 +28,7 @@ PNG1 = $(notdir $(wildcard $(RESDIR)*.1bpp.png))
 PNG2 = $(notdir $(wildcard $(RESDIR)*.2bpp.png))
 IMGS = $(PNG1:%.png=$(OBJDIR)%) $(PNG2:%.png=$(OBJDIR)%)
 
-ASM_FLAGS += -l $(addprefix -I,$(INCLUDES))
+ASM_FLAGS += $(addprefix -I,$(INCLUDES))
 
 GFX_FLAGS +=
 
@@ -64,7 +64,7 @@ $(OBJDIR)%.1bpp: $(RESDIR)%.1bpp.png
 	$(GFX) $(GFX_FLAGS) -d 1 -o $@ $< @$(RESDIR)$*.flags
 
 $(OBJDIR)%.2bpp: $(RESDIR)%.2bpp.png
-	$(GFX) $(GFX_FLAGS) -d 2 -c gpl:$(RESDIR)palette.gpl -o $@ $< @$(RESDIR)$*.flags
+	$(GFX) $(GFX_FLAGS) -d 2 -o $@ $< @$(RESDIR)$*.flags
 
 $(OBJDIR):
 	$(MKDIR) $(OBJDIR)
