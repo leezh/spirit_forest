@@ -37,7 +37,7 @@ TitleScreen::
     call BlitTiles
 
     ld a, LCDCF_ON | LCDCF_BGON
-    ld [rLCDC], a
+    ldh [rLCDC], a
     ld a, 8 * 8
     ld [rSCY], a
 .animateIn:
@@ -86,7 +86,7 @@ TitleScreen::
 
     call DMATransfer
     ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON
-    ld [rLCDC], a
+    ldh [rLCDC], a
 
 .loop:
     call WaitVBlankEnd
@@ -127,11 +127,11 @@ TitleScreen::
 
 .animateOut
     ld a, LCDCF_ON | LCDCF_BGON
-    ld [rLCDC], a
+    ldh [rLCDC], a
     ld a, 8
     call WaitFrames
     ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON
-    ld [rLCDC], a
+    ldh [rLCDC], a
     ld a, 8
     call WaitFrames
     dec c

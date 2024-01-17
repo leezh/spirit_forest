@@ -43,7 +43,7 @@ SECTION "Video", ROM0
 ; sensible defaults.
 ResetScreen::
     ld a, 0
-    ld [rLCDC], a
+    ldh [rLCDC], a
     ld [rSCX], a
     ld [rSCY], a
     ld [rWX], a

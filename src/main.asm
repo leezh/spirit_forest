@@ -10,8 +10,11 @@ SECTION "Main", ROM0
 Main:
     di
     ld a, 0
-    ld [rNR52], a
-    ld [rLCDC], a
+    ldh [rNR52], a
+    ldh [rLCDC], a
+    ldh [GamepadPressed], a
+    ldh [GamepadJustPressed], a
+    ldh [GamepadJustReleased], a
     ld a, BANK(InitVideo)
     ld [rROMB0], a
     memSet _RAM, $FF, $2000
