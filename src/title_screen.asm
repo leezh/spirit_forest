@@ -138,7 +138,7 @@ TitleScreen::
     jr nz, .animateOut
 
     call FadeOut
-    jp TitleScreen
+    jp LoadLevel
 
 TitleBanner:
     INCBIN "title.2bpp"

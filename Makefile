@@ -10,8 +10,11 @@ RUNNER       = mgba
 
 OBJDIR   = obj/
 SRCDIR   = src/
-RESDIR   = res/
 INCLUDES = $(SRCDIR) $(OBJDIR)
+1BPP_DIR = tilesets-1bpp/
+2BPP_DIR = tilesets/
+BLOCKDIR = blocksets/
+IMAGEDIR = images/
 
 ASM    = $(RGBDS_HOME)rgbasm
 GFX    = $(RGBDS_HOME)rgbgfx
@@ -24,13 +27,13 @@ BIN  = $(PROJECT_NAME).gb
 SYM  = $(PROJECT_NAME).sym
 SRCS = $(notdir $(wildcard $(SRCDIR)*.asm))
 OBJS = $(SRCS:%.asm=$(OBJDIR)%.o)
-PNG1 = $(notdir $(wildcard $(RESDIR)*.1bpp.png))
-PNG2 = $(notdir $(wildcard $(RESDIR)*.2bpp.png))
-PNGB = $(notdir $(wildcard $(RESDIR)*.blit.png))
-IMGS = $(PNG1:%.png=$(OBJDIR)%) \
-	   $(PNG2:%.png=$(OBJDIR)%) \
-	   $(PNGB:%.blit.png=$(OBJDIR)%.tilemap) \
-	   $(PNGB:%.blit.png=$(OBJDIR)%.2bpp)
+IMG_1BPP = $(notdir $(wildcard $(1BPP_DIR)*.png))
+IMG_2BPP = $(notdir $(wildcard $(2BPP_DIR)*.png))
+IMG_BLIT = $(notdir $(wildcard $(IMAGEDIR)*.png))
+IMGS = $(IMG_1BPP:%.png=$(OBJDIR)%.1bpp) \
+	   $(IMG_2BPP:%.png=$(OBJDIR)%.2bpp) \
+	   $(IMG_BLIT:%.png=$(OBJDIR)%.tilemap) \
+	   $(IMG_BLIT:%.png=$(OBJDIR)%.2bpp)
 
 ASM_FLAGS += $(addprefix -I,$(INCLUDES))
 
@@ -67,13 +70,13 @@ $(BIN): $(OBJDIR) $(IMGS) $(OBJS)
 $(OBJDIR)%.o: $(SRCDIR)%.asm
 	$(ASM) $(ASM_FLAGS) -o $@ $<
 
-$(OBJDIR)%.1bpp: $(RESDIR)%.1bpp.png
+$(OBJDIR)%.1bpp: $(1BPP_DIR)%.png
 	$(GFX) $(GFX_FLAGS) $(GFX_1BPP_FLAGS) -o $@ $<
 
-$(OBJDIR)%.2bpp: $(RESDIR)%.2bpp.png
+$(OBJDIR)%.2bpp: $(2BPP_DIR)%.png
 	$(GFX) $(GFX_FLAGS) $(GFX_2BPP_FLAGS) -o $@ $<
 
-$(OBJDIR)%.tilemap $(OBJDIR)%.2bpp: $(RESDIR)%.blit.png
+$(OBJDIR)%.tilemap $(OBJDIR)%.2bpp: $(IMAGEDIR)%.png
 	$(GFX) $(GFX_FLAGS) $(GFX_2BPP_FLAGS) -o $(OBJDIR)$*.2bpp -t $(OBJDIR)$*.tilemap -u $<
 
 $(OBJDIR):

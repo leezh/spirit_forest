@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="13" height="11" tilewidth="16" tileheight="16" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" source="../blocksets/overworld.tsx"/>
+ <layer id="1" name="Tile Layer 1" width="13" height="11">
+  <data encoding="csv">
+26,10,10,26,10,26,10,26,10,26,10,26,10,
+10,26,9,5,10,2,5,10,26,10,26,10,26,
+26,10,1,1,1,1,1,26,9,7,5,26,10,
+9,4,1,26,10,26,1,1,1,1,1,10,26,
+10,10,26,10,26,10,26,2,4,10,1,1,10,
+10,26,42,58,19,41,10,1,10,10,26,1,26,
+10,11,80,40,37,54,13,17,18,19,41,1,10,
+26,43,28,30,1,53,29,33,34,21,38,1,26,
+10,26,1,43,44,28,45,1,1,1,1,1,10,
+10,1,1,26,10,1,1,1,26,9,4,26,10,
+10,1,1,10,26,10,26,10,10,26,26,10,26
+</data>
+ </layer>
+</map>
