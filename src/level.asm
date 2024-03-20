@@ -5,38 +5,84 @@ INCLUDE "video.inc"
 
 SECTION "Level Variables", WRAM0
 
-LevelAddress::
+Level:
+.address::
+    dw
+.width
+    db
+.height
+    db
+.dataAddress
     dw
 
-PlayerPosition:
-.x::
+Blockset:
+.dataAddress
     dw
-.y::
-    dw
+.drawX
+    db
+.drawY
+    db
 
 SECTION "Level", ROM0
 
 LoadLevel::
     call ResetScreen
 
-    ld a, BANK(TestLevel)
-    ld [rROMB0], a
-    ld bc, OverworldTileset.end - OverworldTileset - 2
-    ld de, OverworldTileset
-    ld a, [de]
-    inc de
+    ld a, [Level.address]
     ld c, a
-    ld a, [de]
-    inc de
+    ld a, [Level.address + 1]
     ld b, a
-    ld hl, _VRAM + $800
+    ld a, [bc]
+    ld l, a
+    inc bc
+    ld a, [bc]
+    ld h, a
+
+    inc bc
+    ld a, [bc]
+    ld [Level.height], a
+    inc bc
+    ld a, [bc]
+    ld [Level.width], a
+    inc bc
+    ld a, c
+    ld [Level.dataAddress], a
+    ld a, b
+    ld [Level.dataAddress + 1], a
+
+    ld a, [hli]
+    ld e, a
+    ld a, [hli]
+    ld d, a
+    ld a, l
+    ld [Blockset.dataAddress], a
+    ld a, h
+    ld [Blockset.dataAddress + 1], a
+
+    ld a, [de]
+    ld c, a
+    inc de
+    ld a, [de]
+    ld b, a
+    inc de
+    ld hl, _VRAM
     call MemCopy
 
+    FOR X, 16
+        FOR Y, 16
+            ld a, X
+            ld [Blockset.drawX], a
+            ld a, Y
+            ld [Blockset.drawY], a
+            call DrawBlock
+        ENDR
+    ENDR
+
     call DMATransfer
-    ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON
+    ld a, LCDCF_ON | LCDCF_BGON | LCDCF_BLK01 | LCDCF_OBJON
     ldh [rLCDC], a
 
-.loop:
+.loop
     call WaitVBlankEnd
     call WaitVBlank
     call UpdateGamepad
@@ -44,17 +90,75 @@ LoadLevel::
     call DMATransfer
     jr .loop
 
-LevelRegistry::
-    db BANK("TestLevel")
+DrawBlock:
+    ld a, [Level.dataAddress]
+    ld l, a
+    ld a, [Level.dataAddress + 1]
+    ld h, a
 
-SECTION "TestLevel", ROMX, BANK[2]
+    ld a, [Level.width]
+    ld c, a
+    ld b, 0
+
+    ld a, [Blockset.drawY]
+    cp a, 0
+.moveY
+    jr z, .moveX
+    add hl, bc
+    dec a
+    jr .moveY
+.moveX
+    ld a, [Blockset.drawX]
+    ld c, a
+    add hl, bc
+
+    ld a, [hl]
+    ld b, a
+
+    ld a, [Blockset.dataAddress]
+    ld e, a
+    ld a, [Blockset.dataAddress + 1]
+    ld d, a
+
+    ld a, b
+    cp a, 0
+.moveBlockset
+    jr z, .blit
+    inc de
+    inc de
+    inc de
+    inc de
+    dec a
+    jr .moveBlockset
+.blit
+    ld hl, _SCRN0
+    ld a, [Blockset.drawX]
+    sla a
+    and a, 31
+    ld [DrawBox.x], a
+    ld a, [Blockset.drawY]
+    sla a
+    and a, 31
+    ld [DrawBox.y], a
+    ld a, 2
+    ld [DrawBox.width], a
+    ld [DrawBox.height], a
+    ld a, 0
+    ld [DrawBox.tileOffset], a
+    call BlitTiles
+    ret
+
+SECTION "MapBank1", ROMX
 
 TestLevel::
-    db 32
-    db 32
+    dw OverworldBlockset
+    INCBIN "test_level.lvl"
 
-SECTION "Overworld Tileset", ROMX, BANK[2]
-OverworldTileset::
-    dw .end - OverworldTileset - 3
+OverworldBlockset:
+    dw OverworldTileset
+    INCBIN "overworld.blk"
+
+OverworldTileset:
+    dw .end - OverworldTileset - 2
     INCBIN "overworld.2bpp"
 .end

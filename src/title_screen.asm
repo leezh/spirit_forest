@@ -17,6 +17,7 @@ SECTION "TitleScreen", ROMX, BANK[1]
 TitleScreen::
     call ResetScreen
 
+.drawBackground
     ld bc, TitleBanner.end - TitleBanner
     ld de, TitleBanner
     ld hl, _VRAM + $800
@@ -40,14 +41,16 @@ TitleScreen::
     ldh [rLCDC], a
     ld a, 8 * 8
     ld [rSCY], a
-.animateIn:
+
+.animateIn
     call WaitVBlankEnd
     call WaitVBlank
     ld a, [rSCY]
     dec a
     ld [rSCY], a
     jr nz, .animateIn
-.drawMenu:
+
+.drawMenu
     ld a, 6
     ld [DrawBox.x], a
     ld a, 12
@@ -88,7 +91,7 @@ TitleScreen::
     ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON
     ldh [rLCDC], a
 
-.loop:
+.loop
     call WaitVBlankEnd
     call WaitVBlank
     call UpdateGamepad
@@ -138,6 +141,13 @@ TitleScreen::
     jr nz, .animateOut
 
     call FadeOut
+
+    ld a, LOW(TestLevel)
+    ld [Level.address], a
+    ld a, HIGH(TestLevel)
+    ld [Level.address + 1], a
+    ld a, BANK(TestLevel)
+    ld [rROMB0], a
     jp LoadLevel
 
 TitleBanner:

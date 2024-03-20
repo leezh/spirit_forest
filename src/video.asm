@@ -44,16 +44,16 @@ SECTION "Video", ROM0
 ResetScreen::
     ld a, 0
     ldh [rLCDC], a
-    ld [rSCX], a
-    ld [rSCY], a
-    ld [rWX], a
+    ldh [rSCX], a
+    ldh [rSCY], a
+    ldh [rWX], a
     ld a, WX_OFS
-    ld [rWY], a
+    ldh [rWY], a
 
     ld a, %11100100
-    ld [rBGP], a
-    ld [rOBP0], a
-    ld [rOBP1], a
+    ldh [rBGP], a
+    ldh [rOBP0], a
+    ldh [rOBP1], a
 
     memSet _SCRN0, $FF, $400
     memSet _ShadowOAM, $00, $FF
