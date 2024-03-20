@@ -151,9 +151,9 @@ TitleScreen::
     jp LoadLevel
 
 TitleBanner:
-    INCBIN "title.2bpp"
+    INCBIN "data/images/title.2bpp"
 .end
 
 TitleBannerMap:
-    INCBIN "title.tilemap"
+    INCBIN "data/images/title.tmap"
 .end

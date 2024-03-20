@@ -336,7 +336,7 @@ defaultWindowFrameTiles:
 
 
 Font:
-    INCBIN "font.1bpp"
+    INCBIN "data/images/font.1bpp"
 .end
 
 

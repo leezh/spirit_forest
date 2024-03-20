@@ -11,11 +11,9 @@ RUNNER       = mgba-qt
 OBJDIR   = obj/
 SRCDIR   = src/
 INCLUDES = $(SRCDIR) $(OBJDIR)
-1BPP_DIR = data/tilesets-1bpp/
-2BPP_DIR = data/tilesets/
-IMAGEDIR = data/images/
-BLOCKDIR = data/blocksets/
-LEVELDIR = data/levels/
+IMGDIR   = data/images/
+TSXDIR   = data/tilesets/
+LVLDIR   = data/levels/
 
 ASM     = $(RGBDS_HOME)rgbasm
 GFX     = $(RGBDS_HOME)rgbgfx
@@ -28,21 +26,21 @@ TMX2LVL = tools/tmx2lvl
 
 BIN  = $(PROJECT_NAME).gb
 SYM  = $(PROJECT_NAME).sym
-SRCS = $(notdir $(wildcard $(SRCDIR)*.asm))
+SRCS = $(wildcard $(SRCDIR)*.asm)
 OBJS = $(SRCS:%.asm=$(OBJDIR)%.o)
 
-IMG_1BPP = $(notdir $(wildcard $(1BPP_DIR)*.png))
-IMG_2BPP = $(notdir $(wildcard $(2BPP_DIR)*.png))
-IMG_BLIT = $(notdir $(wildcard $(IMAGEDIR)*.png))
-IMGS = $(IMG_1BPP:%.png=$(OBJDIR)%.1bpp) \
-	   $(IMG_2BPP:%.png=$(OBJDIR)%.2bpp) \
-	   $(IMG_BLIT:%.png=$(OBJDIR)%.tilemap) \
-	   $(IMG_BLIT:%.png=$(OBJDIR)%.2bpp)
+IMG_1BPP = $(wildcard $(IMGDIR)*.1bpp.png)
+IMG_2BPP = $(wildcard $(IMGDIR)*.2bpp.png)
+IMG_TMAP = $(wildcard $(IMGDIR)*.tmap.png)
+BLOCKSET = $(wildcard $(TSXDIR)*.blk.tmx)
+LEVELSET = $(wildcard $(LVLDIR)*.lvl.tmx)
 
-BLOCKSET = $(notdir $(wildcard $(BLOCKDIR)*.tmx))
-LEVELSET = $(notdir $(wildcard $(LEVELDIR)*.tmx))
-LEVELS = $(BLOCKSET:%.tmx=$(OBJDIR)%.blk) \
-	     $(LEVELSET:%.tmx=$(OBJDIR)%.lvl) \
+DATA = $(IMG_1BPP:%.png=$(OBJDIR)%) \
+		$(IMG_2BPP:%.png=$(OBJDIR)%) \
+		$(BLOCKSET:%.tmx=$(OBJDIR)%) \
+		$(LEVELSET:%.tmx=$(OBJDIR)%) \
+		$(IMG_TMAP:%.png=$(OBJDIR)%) \
+		$(IMG_TMAP:%.tmap.png=$(OBJDIR)%.2bpp)
 
 ASM_FLAGS += $(addprefix -I,$(INCLUDES))
 
@@ -61,7 +59,7 @@ FIX_FLAGS += -n $(VERSION)
 FIX_FLAGS += -t $(TITLE)
 FIX_FLAGS += -m $(CART_TYPE)
 
-.PHONY: all rebuild run clean images
+.PHONY: all rebuild run clean
 
 all: $(BIN)
 
@@ -70,33 +68,34 @@ rebuild: clean all
 run: $(BIN)
 	$(RUNNER) $(BIN)
 
-images: $(IMGS)
-
-$(BIN): $(OBJDIR) $(IMGS) $(LEVELS) $(OBJS)
+$(BIN): $(DATA) $(LEVELS) $(OBJS)
 	$(LINK) $(LINK_FLAGS) -o $(BIN) -n $(SYM) $(OBJS)
 	$(FIX) $(FIX_FLAGS) $(BIN)
 
-$(OBJDIR)%.o: $(SRCDIR)%.asm
+$(OBJDIR)%.o: %.asm
+	@$(MKDIR) $(dir $@)
 	$(ASM) $(ASM_FLAGS) -o $@ $<
 
-$(OBJDIR)%.1bpp: $(1BPP_DIR)%.png
+$(OBJDIR)%.1bpp: %.1bpp.png
+	@$(MKDIR) $(dir $@)
 	$(GFX) $(GFX_FLAGS) $(GFX_1BPP_FLAGS) -o $@ $<
 
-$(OBJDIR)%.2bpp: $(2BPP_DIR)%.png
+$(OBJDIR)%.2bpp: %.2bpp.png
+	@$(MKDIR) $(dir $@)
 	$(GFX) $(GFX_FLAGS) $(GFX_2BPP_FLAGS) -o $@ $<
 
-$(OBJDIR)%.tilemap $(OBJDIR)%.2bpp: $(IMAGEDIR)%.png
-	$(GFX) $(GFX_FLAGS) $(GFX_2BPP_FLAGS) -o $(OBJDIR)$*.2bpp -t $(OBJDIR)$*.tilemap -u $<
+$(OBJDIR)%.tmap $(OBJDIR)%.2bpp: %.tmap.png
+	@$(MKDIR) $(dir $@)
+	$(GFX) $(GFX_FLAGS) $(GFX_2BPP_FLAGS) -o $(OBJDIR)$*.2bpp -t $(OBJDIR)$*.tmap -u $<
 
-$(OBJDIR)%.blk: $(BLOCKDIR)%.tmx
+$(OBJDIR)%.blk: %.blk.tmx
+	@$(MKDIR) $(dir $@)
 	$(TMX2BLK) $< $@
 
-$(OBJDIR)%.lvl: $(LEVELDIR)%.tmx
+$(OBJDIR)%.lvl: %.lvl.tmx
+	@$(MKDIR) $(dir $@)
 	$(TMX2LVL) $< $@
 
-$(OBJDIR):
-	$(MKDIR) $(OBJDIR)
-
 clean:
-	$(RM) $(BIN) $(SYM) $(OBJS) $(LEVELS) $(IMGS)
+	$(RM) $(BIN) $(SYM) $(OBJS) $(DATA)
 

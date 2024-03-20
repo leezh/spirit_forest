@@ -152,13 +152,13 @@ SECTION "MapBank1", ROMX
 
 TestLevel::
     dw OverworldBlockset
-    INCBIN "test_level.lvl"
+    INCBIN "data/levels/test_level.lvl"
 
 OverworldBlockset:
     dw OverworldTileset
-    INCBIN "overworld.blk"
+    INCBIN "data/tilesets/overworld.blk"
 
 OverworldTileset:
     dw .end - OverworldTileset - 2
-    INCBIN "overworld.2bpp"
+    INCBIN "data/images/overworld.2bpp"
 .end
