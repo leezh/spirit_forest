@@ -113,24 +113,20 @@ DrawBlock:
     add hl, bc
 
     ld a, [hl]
-    ld b, a
+    ld c, a
+    sla c
+    rl b
+    sla c
+    rl b
 
     ld a, [Blockset.dataAddress]
-    ld e, a
+    ld l, a
     ld a, [Blockset.dataAddress + 1]
-    ld d, a
+    ld h, a
+    add hl, bc
+    ld e, l
+    ld d, h
 
-    ld a, b
-    cp a, 0
-.moveBlockset
-    jr z, .blit
-    inc de
-    inc de
-    inc de
-    inc de
-    dec a
-    jr .moveBlockset
-.blit
     ld hl, _SCRN0
     ld a, [Blockset.drawX]
     sla a
