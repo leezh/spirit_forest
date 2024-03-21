@@ -47,7 +47,7 @@ class MapData:
         assert self.rows % 2 == 0
         assert self.cols % 2 == 0
         for y in range(0, self.rows, 2):
-            for x in range(0, self.rows, 2):
+            for x in range(0, self.cols, 2):
                 tiles = [
                     self.tiles[y + 0][x + 0],
                     self.tiles[y + 0][x + 1],
